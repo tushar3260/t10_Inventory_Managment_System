@@ -2,13 +2,14 @@ import React from "react";
 import ProductList from "./pages/ProductList";
 import LoginPage from "./pages/Loginpage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./Dashboard";
 function App() {
   return (
     <Router>  
        <Routes>
-            <Route path="/" element={<ProductList />} />
-            <Route path="/login" element={<LoginPage />} />
-           
+            <Route path="/product" element={<ProductList />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
     </Router>
   );
