@@ -1,15 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Dashboard from './dashboard.jsx'
-
+import React from "react";
+import ProductList from "./pages/ProductList";
+import LoginPage from "./pages/Loginpage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./Dashboard";
 function App() {
   return (
-    <div>
-      <Dashboard />
-    </div>
-  )
+    <Router>  
+       <Routes>
+            <Route path="/product" element={<ProductList />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
