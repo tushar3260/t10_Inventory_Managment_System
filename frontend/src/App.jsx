@@ -1,15 +1,16 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProductList from "./pages/ProductList";
-import Dashboard from "./dashboard";
-
+import LoginPage from "./pages/Loginpage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./Dashboard";
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
+    <Router>  
+       <Routes>
+            <Route path="/product" element={<ProductList />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
     </Router>
   );
 }
