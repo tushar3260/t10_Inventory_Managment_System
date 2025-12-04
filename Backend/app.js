@@ -8,6 +8,7 @@ import productRoutes from './routes/product.routes.js';
 import stockRoutes from './routes/stock.routes.js';
 import transactionRoutes from './routes/transaction.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
+import categoryRoutes from './routes/category.routes.js';
 import dotenv from 'dotenv';
 dotenv.config();
 db();
@@ -28,6 +29,6 @@ app.use("/api/products", productRoutes);
 app.use("/api/stock", stockRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use("/api/categories", categoryRoutes);
 export default app;
 
