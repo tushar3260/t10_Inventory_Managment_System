@@ -331,4 +331,5 @@ const Panel = ({ title, subtitle, children, action }) => (
     </div>
   </div>
 );
+
 export default Dashboard;

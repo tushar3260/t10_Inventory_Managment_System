@@ -3,6 +3,7 @@ import ProductList from "./pages/ProductList";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./dashboard";
 import Reports from "./pages/reporting";
+
 function App() {
   return (
     <Router>  
@@ -12,6 +13,7 @@ function App() {
             <Route path="/reports" element={<Reports />} />
 
            
+          
           </Routes>
     </Router>
   );
