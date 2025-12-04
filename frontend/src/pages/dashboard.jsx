@@ -1,12 +1,67 @@
-import React, { useState } from 'react';
-import { Package, TrendingUp, AlertTriangle, XCircle, Search, Bell, Settings, Download, ArrowUp, ArrowDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, TrendingUp, AlertTriangle, XCircle, Search, Bell, Settings, Download, ArrowUp, ArrowDown, RefreshCw } from 'lucide-react';
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch('http://localhost:5000/api/dashboard');
+      if (!response.ok) throw new Error('Failed to fetch dashboard data');
+      const data = await response.json();
+      setDashboardData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const outOfStock = dashboardData?.lowStock?.filter(item => item.quantity === 0).length || 0;
+  const lowStockCount = dashboardData?.lowStock?.length || 0;
+
+  const inventoryValue = dashboardData?.top5?.reduce((sum, item) => sum + (item.quantity * (item.price || 0)), 0) || 0;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-slate-600 font-medium">Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-md">
+          <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-slate-800 mb-2">Error Loading Data</h2>
+          <p className="text-slate-600 mb-4">{error}</p>
+          <button 
+            onClick={fetchDashboardData}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
-      {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -31,6 +86,14 @@ const Dashboard = () => {
               />
             </div>
             
+            <button 
+              onClick={fetchDashboardData}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              title="Refresh data"
+            >
+              <RefreshCw className="w-5 h-5 text-slate-600" />
+            </button>
+            
             <button className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors">
               <Bell className="w-5 h-5 text-slate-600" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -54,12 +117,11 @@ const Dashboard = () => {
       </header>
 
       <div className="p-6">
-        {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <KpiCard 
             icon={<Package className="w-6 h-6" />}
             label="Total Products" 
-            value="1,240" 
+            value={dashboardData?.totalProducts || 0}
             change="+12%"
             trend="up"
             gradient="from-blue-500 to-blue-600"
@@ -67,7 +129,7 @@ const Dashboard = () => {
           <KpiCard 
             icon={<TrendingUp className="w-6 h-6" />}
             label="Inventory Value" 
-            value="₹18,40,000" 
+            value={`₹${inventoryValue.toLocaleString('en-IN')}`}
             change="+8%"
             trend="up"
             gradient="from-emerald-500 to-emerald-600"
@@ -75,7 +137,7 @@ const Dashboard = () => {
           <KpiCard 
             icon={<AlertTriangle className="w-6 h-6" />}
             label="Low Stock Items" 
-            value="32" 
+            value={lowStockCount}
             change="+5"
             trend="down"
             gradient="from-amber-500 to-amber-600"
@@ -84,7 +146,7 @@ const Dashboard = () => {
           <KpiCard 
             icon={<XCircle className="w-6 h-6" />}
             label="Out of Stock" 
-            value="7" 
+            value={outOfStock}
             change="-2"
             trend="up"
             gradient="from-red-500 to-red-600"
@@ -92,122 +154,94 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Middle Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Low Stock Table */}
           <Panel title="Low Stock Items" subtitle="Items requiring immediate attention">
             <div className="overflow-hidden">
-              <table className="w-full text-sm">
-                <thead className="text-left text-slate-600 bg-slate-50">
-                  <tr>
-                    <th className="py-3 px-3 font-semibold">Product</th>
-                    <th className="py-3 px-3 font-semibold">SKU</th>
-                    <th className="py-3 px-3 font-semibold">Qty</th>
-                    <th className="py-3 px-3 font-semibold">Reorder</th>
-                    <th className="py-3 px-3 font-semibold">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-medium text-slate-800">Wireless Mouse</td>
-                    <td className="py-3 px-3 text-slate-600">WM-001</td>
-                    <td className="py-3 px-3">
-                      <span className="text-red-600 font-bold">3</span>
-                    </td>
-                    <td className="py-3 px-3 text-slate-600">10</td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-medium">
-                        Critical
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-medium text-slate-800">Bluetooth Speaker</td>
-                    <td className="py-3 px-3 text-slate-600">BS-014</td>
-                    <td className="py-3 px-3">
-                      <span className="text-red-600 font-bold">1</span>
-                    </td>
-                    <td className="py-3 px-3 text-slate-600">8</td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-medium">
-                        Critical
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-medium text-slate-800">HDMI Cable</td>
-                    <td className="py-3 px-3 text-slate-600">HC-089</td>
-                    <td className="py-3 px-3">
-                      <span className="text-amber-600 font-bold">12</span>
-                    </td>
-                    <td className="py-3 px-3 text-slate-600">20</td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">
-                        Low
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              {dashboardData?.lowStock && dashboardData.lowStock.length > 0 ? (
+                <table className="w-full text-sm">
+                  <thead className="text-left text-slate-600 bg-slate-50">
+                    <tr>
+                      <th className="py-3 px-3 font-semibold">Product</th>
+                      <th className="py-3 px-3 font-semibold">SKU</th>
+                      <th className="py-3 px-3 font-semibold">Qty</th>
+                      <th className="py-3 px-3 font-semibold">Reorder</th>
+                      <th className="py-3 px-3 font-semibold">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dashboardData.lowStock.slice(0, 5).map((item, index) => (
+                      <tr key={item._id || index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td className="py-3 px-3 font-medium text-slate-800">{item.name}</td>
+                        <td className="py-3 px-3 text-slate-600">{item.sku}</td>
+                        <td className="py-3 px-3">
+                          <span className={`font-bold ${item.quantity === 0 ? 'text-red-600' : item.quantity <= item.lowThreshold / 2 ? 'text-red-600' : 'text-amber-600'}`}>
+                            {item.quantity}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 text-slate-600">{item.lowThreshold}</td>
+                        <td className="py-3 px-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            item.quantity === 0 
+                              ? 'bg-red-100 text-red-700' 
+                              : item.quantity <= item.lowThreshold / 2
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {item.quantity === 0 ? 'Out of Stock' : item.quantity <= item.lowThreshold / 2 ? 'Critical' : 'Low'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="text-center py-8 text-slate-500">
+                  <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>No low stock items</p>
+                </div>
+              )}
             </div>
           </Panel>
 
-          {/* Top 5 Products */}
           <Panel title="Top 5 Products by Quantity" subtitle="Highest stock levels">
             <div className="overflow-hidden">
-              <table className="w-full text-sm">
-                <thead className="text-left text-slate-600 bg-slate-50">
-                  <tr>
-                    <th className="py-3 px-3 font-semibold">Product</th>
-                    <th className="py-3 px-3 font-semibold">SKU</th>
-                    <th className="py-3 px-3 font-semibold">In Stock</th>
-                    <th className="py-3 px-3 font-semibold">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-medium text-slate-800">USB-C Cable</td>
-                    <td className="py-3 px-3 text-slate-600">UC-210</td>
-                    <td className="py-3 px-3">
-                      <span className="text-emerald-600 font-bold">420</span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
-                        Healthy
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-medium text-slate-800">Laptop Stand</td>
-                    <td className="py-3 px-3 text-slate-600">LS-032</td>
-                    <td className="py-3 px-3">
-                      <span className="text-emerald-600 font-bold">316</span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
-                        Healthy
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-medium text-slate-800">Phone Case</td>
-                    <td className="py-3 px-3 text-slate-600">PC-155</td>
-                    <td className="py-3 px-3">
-                      <span className="text-emerald-600 font-bold">284</span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
-                        Healthy
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              {dashboardData?.top5 && dashboardData.top5.length > 0 ? (
+                <table className="w-full text-sm">
+                  <thead className="text-left text-slate-600 bg-slate-50">
+                    <tr>
+                      <th className="py-3 px-3 font-semibold">Product</th>
+                      <th className="py-3 px-3 font-semibold">SKU</th>
+                      <th className="py-3 px-3 font-semibold">In Stock</th>
+                      <th className="py-3 px-3 font-semibold">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dashboardData.top5.map((item, index) => (
+                      <tr key={item._id || index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0">
+                        <td className="py-3 px-3 font-medium text-slate-800">{item.name}</td>
+                        <td className="py-3 px-3 text-slate-600">{item.sku}</td>
+                        <td className="py-3 px-3">
+                          <span className="text-emerald-600 font-bold">{item.quantity}</span>
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
+                            Healthy
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="text-center py-8 text-slate-500">
+                  <TrendingUp className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>No products available</p>
+                </div>
+              )}
             </div>
           </Panel>
         </div>
 
-        {/* Recent Transactions */}
         <Panel 
           title="Recent Transactions" 
           subtitle="Last 24 hours activity"
