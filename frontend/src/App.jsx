@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Dashboard from "./dashboard.jsx";
 import Suppliers from "./Suppliers.jsx";
-import SupplierForm from "./Supplierform.jsx";  
+import SupplierForm from "./SupplierForm.jsx";  
 import "./App.css";
 
 function App() {

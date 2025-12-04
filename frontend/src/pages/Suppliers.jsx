@@ -98,6 +98,24 @@ export default function Suppliers() {
       address: "Chennai, TN",
       status: "Active",
     },
+    {
+      id: 11,
+      name: "Harshad Mehta",
+      company: "BrightStar Electronics",
+      phone: "9876543210",
+      email: "harshad@brightstar.com",
+      address: "Mumbai, MH",
+      status: "Active"
+    },
+    {
+      id: 12,
+      name: "Pooja Rana",
+      company: "GreenLeaf Organics",
+      phone: "9345678123",
+      email: "pooja@greenleaf.com",
+      address: "Dehradun, UK",
+      status: "Inactive"
+    },
   ];
 
   // Load from localStorage or fallback to default
