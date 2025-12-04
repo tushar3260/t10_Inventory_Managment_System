@@ -1,22 +1,20 @@
 import React from "react";
 import ProductList from "./pages/ProductList";
+import LoginPage from "./pages/Loginpage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./dashboard";
 import Reports from "./pages/reporting";
-
+import Dashboard from "./pages/dashboard";
 function App() {
   return (
     <Router>  
        <Routes>
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/product" element={<ProductList />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/reports" element={<Reports />} />
 
-           
-          
           </Routes>
     </Router>
   );
 }
-
 export default App;
