@@ -1,7 +1,7 @@
 import React from "react";
 import ProductList from "./pages/ProductList";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./dashboard";
+import Dashboard from "./pages/dashboard";
 import Reports from "./pages/reporting";
 
 function App() {
