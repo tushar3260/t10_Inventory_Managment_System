@@ -4,7 +4,7 @@ import LoginPage from "./pages/Loginpage";
 import Reports from "./pages/reporting";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/dashboard";
-import LandingPage from "./pages/LandingPage";
+import WarehouseStaffDashboard from "./pages/warehousedash";
 function App() {
   return (
     <Router>  
@@ -14,9 +14,9 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/staffdashboard" element={<WarehouseStaffDashboard />} />
           </Routes>
     </Router>
   );
 }
-
 export default App;
