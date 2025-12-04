@@ -10,8 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+=======
+    "axios": "^1.13.2",
+    "lucide-react": "^0.555.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+>>>>>>> 5b03536ea872d828fde41f67213d42770c3ae82e
     "react-router-dom": "^7.10.0"
   },
   "devDependencies": {
@@ -23,6 +30,6 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "vite": "^7.2.4"
+    "vite": "^7.2.6"
   }
 }

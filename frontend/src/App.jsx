@@ -1,23 +1,43 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import Dashboard from "./dashboard.jsx";
-import Suppliers from "./Suppliers.jsx";
-import SupplierForm from "./SupplierForm.jsx";  
 import "./App.css";
+
+/* ------------------ Main Pages ------------------ */
+import LandingPage from "./pages/LandingPage"; 
+import Dashboard from "./pages/dashboard";
+import ProductList from "./pages/ProductList";
+import LoginPage from "./pages/Loginpage";
+import Reports from "./pages/reporting";
+import WarehouseStaffDashboard from "./pages/warehousedash";
+
+/* ------------------ Supplier Module ------------------ */
+import Suppliers from "./Suppliers.jsx";
+import SupplierForm from "./SupplierForm.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Home Dashboard */}
-        <Route path="/" element={<Dashboard />} />
+        {/* Landing */}
+        <Route path="/" element={<LandingPage />} />
 
-        {/* Supplier Table Page */}
+        {/* Authentication */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Dashboards */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/staffdashboard" element={<WarehouseStaffDashboard />} />
+
+        {/* Product Page */}
+        <Route path="/product" element={<ProductList />} />
+
+        {/* Reports */}
+        <Route path="/reports" element={<Reports />} />
+
+        {/* Suppliers Module */}
         <Route path="/suppliers" element={<Suppliers />} />
-
-        {/* Optional – Dedicated form route (not required for modal use) */}
-        <Route path="/add-supplier" element={<SupplierForm />} />
+        <Route path="/add-supplier" element={<SupplierForm />} /> 
+        {/* This route is ONLY if you want form as a standalone page */}
       </Routes>
     </Router>
   );
